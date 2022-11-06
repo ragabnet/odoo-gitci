@@ -1,0 +1,25 @@
+[Unit]
+Description=Odoo GitCI daemon
+After=network.target
+
+[Service]
+ExecStart=/opt/autoci/venv/bin/python3 /opt/autoci/venv/bin/uwsgi --pyargv "/path_to_clients_file.xml" --ini /opt/autoci/odoo-gitci/uwsgi.ini
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+
+WorkingDirectory=/opt/autoci/odoo-gitci/
+RuntimeDirectory=uwsgi
+
+Restart=always
+KillSignal=SIGQUIT
+Type=notify
+StandardError=syslog
+NotifyAccess=all
+
+# the specific user that our service will run as
+User=autoci
+Group=autoci
+
+[Install]
+WantedBy=multi-user.target
+

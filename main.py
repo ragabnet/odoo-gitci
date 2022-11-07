@@ -9,14 +9,34 @@ CLIENT_CONFIG = sys.argv[1]
 DEBUG = False
 
 
-def call_git_pull(dir):
+def call_git_pull(directory, systemd, dockeri):
     """Pulls the latest changes from the git repo"""
-    os.chdir(dir)
+    os.chdir(directory)
     os.system("git pull --recurse-submodules")
     git_stash = os.popen("git stash && git stash list").read()
     git_reset = os.popen("git reset --hard").read()
     git_pull_recurse = os.popen("git pull --recurse-submodules").read()
+
+    try:
+        if systemd:
+            restart_odoo(service_name=systemd)
+        elif dockeri:
+            restart_docker(docker_image=dockeri)
+    except Exception as e:
+        print(f"Exception during services restart: {e}")
+
     print(f"\nDirectory: {dir}\nStash:\n{git_stash}\nReset:\n{git_reset}\nPull:\n{git_pull_recurse}\n")
+
+
+def restart_odoo(service_name="odoo"):
+    """Restarts the odoo server"""
+    # make sure to configure visudo to avoid password prompt
+    os.system(f"service {service_name} restart")
+
+
+def restart_docker(docker_image="odoo"):
+    """Restarts the odoo server"""
+    os.system(f"docker {docker_image} restart")
 
 
 @app.route('/deploy/push', methods=['GET', 'POST'])
@@ -70,10 +90,21 @@ def git_repo_push_event():
         #  after generating your SSH key, add it to the GitHub repo as a deploy key, and run
         #  ssh-add to add the key to the ssh agent.
 
+        # Check if the server is running on systemd or docker
+        systemd, dockeri = False, False
+        try:
+            systemd = CLIENT[0]['@systemd']
+        except KeyError:
+            pass
+        try:
+            dockeri = CLIENT[0]['@docker']
+        except KeyError:
+            pass
+
         # TODO: create a dictionary function to match the event type with the function to call
         #  if "push" in event_type:
         # start a thread to pull the latest changes from the repo
-        threading.Thread(target=call_git_pull, args=(CLIENT[0]['@dir'])).start()
+        threading.Thread(target=call_git_pull, args=(CLIENT[0]['@dir'], systemd, dockeri)).start()
 
         # TODO: Add a check to see if the repo is already being pulled
         # TODO: add functionality to restart a docker image or a systemd instance

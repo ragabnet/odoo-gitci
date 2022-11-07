@@ -64,7 +64,15 @@ A simple web service for GitHub & Bitbucket webhooks to trigger a pull request a
 #### add the webhook to the repository
     https://domain.com:35553/deploy/push
 
+
+##  Step 4: Configure services restart
+
+#### Configure the systemd service to restart without sudo
+    sudo visudo
+    %autoci ALL=NOPASSWD: /bin/systemctl restart odoo.service
+
 ### Thank You!
+
 
 ---
 

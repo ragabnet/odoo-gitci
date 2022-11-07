@@ -1,14 +1,26 @@
 from flask import Flask, request
+import threading
 import xmltodict
 import os
 import sys
 
 app = Flask(__name__)
 CLIENT_CONFIG = sys.argv[1]
+DEBUG = False
+
+
+def call_git_pull(dir):
+    """Pulls the latest changes from the git repo"""
+    os.chdir(dir)
+    os.system("git pull --recurse-submodules")
+    git_stash = os.popen("git stash && git stash list").read()
+    git_reset = os.popen("git reset --hard").read()
+    git_pull_recurse = os.popen("git pull --recurse-submodules").read()
+    print(f"\nDirectory: {dir}\nStash:\n{git_stash}\nReset:\n{git_reset}\nPull:\n{git_pull_recurse}\n")
 
 
 @app.route('/deploy/push', methods=['GET', 'POST'])
-def git_repo_push_request():
+def git_repo_push_event():
     """
         Receive a push request from GitHub or BitBucket and pull the latest code from the repo.
     """
@@ -58,27 +70,23 @@ def git_repo_push_request():
         #  after generating your SSH key, add it to the GitHub repo as a deploy key, and run
         #  ssh-add to add the key to the ssh agent.
 
-        # pull the latest code from the repo
-        os.chdir(CLIENT[0]['@directory'])
-
-        # get standard output from command
-        os.system("git pull --recurse-submodules")
-        git_stash = os.popen("git stash && git stash list").read()
-        git_reset = os.popen("git reset --hard").read()
-        git_pull = os.popen("git pull --recurse-submodules").read()
+        # TODO: create a dictionary function to match the event type with the function to call
+        #  if "push" in event_type:
+        # start a thread to pull the latest changes from the repo
+        threading.Thread(target=call_git_pull, args=(CLIENT[0]['@dir'])).start()
 
         # TODO: Add a check to see if the repo is already being pulled
         # TODO: add functionality to restart a docker image or a systemd instance
-
-        return {
-            "success": f"Successfully pulled the latest code from the repo: {repo_name}",
-            "output": f"{git_stash}\n{git_reset}\n{git_pull}"
-        }
     except Exception as e:
         return {"error": f"Server Error while processing the request: {e}"}
+    else:
+        return {
+            "success": 200,
+            "message": f"Successfully received a {request_origin} {event_type} request from the repo: {repo_name}"
+        }
 
 
 if __name__ == "__main__":
-    app.run(debug=False)
+    app.run(debug=DEBUG)
 else:
     application = app

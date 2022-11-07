@@ -18,7 +18,7 @@ NotifyAccess=all
 
 # the specific user that our service will run as
 User=autoci
-Group=autoci
+Group=nginx
 
 [Install]
 WantedBy=multi-user.target

@@ -1,5 +1,5 @@
 from flask import Flask, request
-import threading
+# import threading
 import xmltodict
 import os
 import sys
@@ -26,6 +26,8 @@ def call_git_pull(directory, systemd, dockeri):
         print(f"Exception during services restart: {e}")
 
     print(f"\nDirectory: {dir}\nStash:\n{git_stash}\nReset:\n{git_reset}\nPull:\n{git_pull_recurse}\n")
+
+    return git_stash, git_reset, git_pull_recurse
 
 
 def restart_odoo(service_name="odoo"):
@@ -103,8 +105,10 @@ def git_repo_push_event():
 
         # TODO: create a dictionary function to match the event type with the function to call
         #  if "push" in event_type:
-        # start a thread to pull the latest changes from the repo
-        threading.Thread(target=call_git_pull, args=(CLIENT[0]['@dir'], systemd, dockeri)).start()
+        # start a thread to pull the latest changes from the repo: REMOVED
+        #  we don't need a thread, it turns out the issue was caused by a COMODO SSL certificate!
+        # threading.Thread(target=call_git_pull, args=(CLIENT[0]['@dir'], systemd, dockeri)).start()
+        git_stash, git_reset, git_pull_recurse = call_git_pull(CLIENT[0]['@dir'], systemd, dockeri)
 
         # TODO: Add a check to see if the repo is already being pulled
         # TODO: add functionality to restart a docker image or a systemd instance
@@ -113,7 +117,10 @@ def git_repo_push_event():
     else:
         return {
             "success": 200,
-            "message": f"Successfully received a {request_origin} {event_type} request from the repo: {repo_name}"
+            "message": f"Successfully received a {request_origin} {event_type} request from the repo: {repo_name}",
+            "git_stash": git_stash,
+            "git_reset": git_reset,
+            "git_pull_recurse": git_pull_recurse,
         }
 
 

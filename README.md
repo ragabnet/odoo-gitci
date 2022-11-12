@@ -67,9 +67,10 @@ A simple web service for GitHub & Bitbucket webhooks to trigger a pull request a
 
 ##  Step 4: Configure services restart
 
-#### Configure the systemd service to restart without sudo
+#### Configure with visudo to restart odoo or docker without password prompt
     sudo visudo
-    %autoci ALL=NOPASSWD: /bin/systemctl restart odoo.service
+    autoci ALL=NOPASSWD: /usr/bin/systemctl restart odoo*
+    autoci ALL=NOPASSWD: /usr/bin/docker restart odoo*
 
 ### Thank You!
 

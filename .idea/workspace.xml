@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="225ed33a-ef71-4800-8446-3a0c013676bb" name="Changes" comment="Added Services restart support for system daemon and docker">
+    <list default="true" id="225ed33a-ef71-4800-8446-3a0c013676bb" name="Changes" comment="rolled back to non multithreading function">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -183,6 +183,8 @@
       <workItem from="1667789451132" duration="12000" />
       <workItem from="1667789474286" duration="1141000" />
       <workItem from="1667812380884" duration="1165000" />
+      <workItem from="1668125437709" duration="1320000" />
+      <workItem from="1668127247746" duration="36000" />
     </task>
     <task id="LOCAL-00001" summary="[ENHANCED S1]">
       <created>1667682195692</created>
@@ -261,7 +263,14 @@
       <option name="project" value="LOCAL" />
       <updated>1667813537482</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="rolled back to non multithreading function">
+      <created>1668125698967</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1668125698967</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -289,7 +298,8 @@
     <MESSAGE value="Updated config file:&#10;nginx keepalive_requests&#10;uwsgi buffer-size&#10;systemd gid" />
     <MESSAGE value="Use non blocking thread, because the Git service didn't like the wait!" />
     <MESSAGE value="Added Services restart support for system daemon and docker" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added Services restart support for system daemon and docker" />
+    <MESSAGE value="rolled back to non multithreading function" />
+    <option name="LAST_COMMIT_MESSAGE" value="rolled back to non multithreading function" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/odoo_gitci$uwsgi.coverage" NAME="uwsgi Coverage Results" MODIFIED="1667761684559" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

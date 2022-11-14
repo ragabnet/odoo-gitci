@@ -33,12 +33,12 @@ def call_git_pull(directory, systemd, dockeri):
 def restart_odoo(service_name="odoo"):
     """Restarts the odoo server"""
     # make sure to configure visudo to avoid password prompt
-    os.system(f"service {service_name} restart")
+    os.system(f"sudo service {service_name} restart")
 
 
 def restart_docker(docker_image="odoo"):
     """Restarts the odoo server"""
-    os.system(f"docker {docker_image} restart")
+    os.system(f"sudo docker {docker_image} restart")
 
 
 @app.route('/deploy/push', methods=['GET', 'POST'])

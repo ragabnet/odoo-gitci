@@ -11,23 +11,36 @@ DEBUG = False
 
 def call_git_pull(directory, systemd, dockeri):
     """Pulls the latest changes from the git repo"""
-    os.chdir(directory)
-    os.system("git pull --recurse-submodules")
-    git_stash = os.popen("git stash && git stash list").read()
-    git_reset = os.popen("git reset --hard").read()
-    git_pull_recurse = os.popen("git pull --recurse-submodules").read()
+    git_commands = {}
 
     try:
-        if systemd:
-            restart_odoo(service_name=systemd)
-        elif dockeri:
-            restart_docker(docker_image=dockeri)
+        os.chdir(directory)
+        git_stash = os.popen("git stash && git stash list").read()
+        git_reset = os.popen("git reset --hard").read()
+        git_pull_recurse = os.popen("git pull --recurse-submodules").read()
+        git_commands = {
+            "git_stash": git_stash if git_stash else "No stash",
+            "git_reset": git_reset if git_reset else "No reset",
+            "git_pull_recurse": git_pull_recurse if git_pull_recurse else "No pull",
+        }
     except Exception as e:
-        print(f"Exception during services restart: {e}")
+        print("Exception Occurred")
+        print(e)
+    else:
+        try:
+            if systemd:
+                restart_odoo(service_name=systemd)
+            elif dockeri:
+                restart_docker(docker_image=dockeri)
+        except Exception as e:
+            print(f"Exception during services restart: {e}")
 
-    print(f"\nDirectory: {dir}\nStash:\n{git_stash}\nReset:\n{git_reset}\nPull:\n{git_pull_recurse}\n")
+        print(f"Push Event received for: {directory} and service: {systemd if systemd else dockeri }")
+        print(f"Git Stash:\n{git_stash}\n")
+        print(f"Git Reset:\n{git_reset}\n")
+        print(f"Git Pull:\n{git_pull_recurse}\n")
 
-    return git_stash, git_reset, git_pull_recurse
+    return git_commands
 
 
 def restart_odoo(service_name="odoo"):
@@ -108,7 +121,7 @@ def git_repo_push_event():
         # start a thread to pull the latest changes from the repo: REMOVED
         #  we don't need a thread, it turns out the issue was caused by a COMODO SSL certificate!
         # threading.Thread(target=call_git_pull, args=(CLIENT[0]['@dir'], systemd, dockeri)).start()
-        git_stash, git_reset, git_pull_recurse = call_git_pull(CLIENT[0]['@dir'], systemd, dockeri)
+        git_command = call_git_pull(CLIENT[0]['@dir'], systemd, dockeri)
 
         # TODO: Add a check to see if the repo is already being pulled
         # TODO: add functionality to restart a docker image or a systemd instance
@@ -118,9 +131,7 @@ def git_repo_push_event():
         return {
             "success": 200,
             "message": f"Successfully received a {request_origin} {event_type} request from the repo: {repo_name}",
-            "git_stash": git_stash,
-            "git_reset": git_reset,
-            "git_pull_recurse": git_pull_recurse,
+            "git_command": git_command if git_command else "",
         }
 
 

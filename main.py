@@ -139,3 +139,6 @@ if __name__ == "__main__":
     app.run(debug=DEBUG)
 else:
     application = app
+
+
+# TODO: we can integrate the logging module and use the uWSGI server to create logs

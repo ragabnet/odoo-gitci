@@ -1,4 +1,11 @@
 <clients>
-    <client repo="github_username/github_reponame1" directory="/clients/directory/full/path/to/repository1" systemd="odoo" />
-    <client repo="github_username/github_reponame2" directory="/clients/directory/full/path/to/repository2" docker="odoo"/>
+    <client repo="git@bitbucket.org:org/repp.git"
+            directory="/opt/user/repo"
+            systemd="odoo"/>
 </clients>
+
+
+
+
+
+

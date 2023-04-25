@@ -1,5 +1,5 @@
 <clients>
-    <client repo="git@bitbucket.org:org/repp.git"
+    <client repo="org/repo"
             directory="/opt/user/repo"
             systemd="odoo"/>
 </clients>

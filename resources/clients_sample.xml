@@ -1,6 +1,6 @@
 <clients>
-    <client repo="git@bitbucket.org:org/repp.git"
-            directory="/opt/user/repo"
+    <client repo="org/repo"
+            dir="/opt/user/repo"
             systemd="odoo"/>
 </clients>
 
